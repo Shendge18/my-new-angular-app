@@ -1,24 +1,24 @@
-import { Component ,Input} from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Task } from './task/task';
+import { NewTask } from './new-task/new-task';
+import { type newTaskData } from './task/task.model';
 
 @Component({
   selector: 'app-tasks',
-  imports: [Task],
+  imports: [Task, NewTask],
   templateUrl: './tasks.html',
   styleUrl: './tasks.css',
 })
-
 export class Tasks {
-  @Input({required:true}) userId!: string;
-  @Input({required:true}) name!: string;
-
-  tasks=[
-      {
+  @Input({ required: true }) userId!: string;
+  @Input({ required: true }) name!: string;
+  isAddingTask = false;
+  tasks = [
+    {
       id: 't1',
       userId: 'u1',
       title: 'Master Angular',
-      summary:
-        'Learn all the basic and advanced features of Angular & how to apply them.',
+      summary: 'Learn all the basic and advanced features of Angular & how to apply them.',
       dueDate: '2025-12-31',
     },
     {
@@ -32,17 +32,36 @@ export class Tasks {
       id: 't3',
       userId: 'u3',
       title: 'Prepare issue template',
-      summary:
-        'Prepare and describe an issue template which will help with project management',
+      summary: 'Prepare and describe an issue template which will help with project management',
       dueDate: '2024-06-15',
     },
   ];
-  
- get selectedUserTasks(){
+
+  get selectedUserTasks() {
     return this.tasks.filter((task) => task.userId === this.userId);
   }
 
-  onCompleteTask(id:string){
-    this.tasks = this.tasks.filter((task)=> task.id !==id);
+  onCompleteTask(id: string) {
+    this.tasks = this.tasks.filter((task) => task.id !== id);
+  }
+
+  onStartTask() {
+    this.isAddingTask = true;
+  }
+
+  onCancelAddTask(){
+     this.isAddingTask = false;
+  }
+
+  onAddTask(newTask: newTaskData)
+  {
+    this.tasks.unshift({
+        id: Date.now().toString(),
+        userId: this.userId,
+        title: newTask.title,
+        summary: newTask.summary,
+        dueDate: newTask.dueDate
+    })
+    this.isAddingTask = false;
   }
 }
